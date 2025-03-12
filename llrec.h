@@ -77,12 +77,43 @@ Node* llfilter(Node* head, Comp pred);
 // implement the above function now.
 //*****************************************************************************
 
-template <typename Comp>
+template <typename Comp> // remember: this syntax is generic so its like a blueprint for a function that can work with any data type! 
 Node* llfilter(Node* head, Comp pred)
 {
     //*********************************************
     // Provide your implementation below
     //*********************************************
+  // from video: you could use head or tail recursion but would be harder unless you used a helper function
+  // most straightforward way: recurse down the list passing in head or next and each parameter is its own pointer - each recursion gets its own head pointer
+  // think going back and "oh youre not going to be filtered out so i can return some information primarily your address back through until someone can use it"
+  // just recurse on and on until you get to base case
+  // return a pointer - an address in case someone needs it?
+  // if someone frees themself - pass back whoever came after - who is still alive - either yours or the item after you
+
+  if(head == nullptr) // base case obv
+  {
+    return nullptr; // returns null since is not void
+  }
+  // pred is: predicate object implementing bool operator() (int value) which is a functor i think - that returns true
+  // if a node SHOULD be removed
+
+  // so we have to call pred like a function because its an object that has overloaded operator() to act like a function!!! aka... a functor
+  if(pred(head->val)) // so this if statment is true if the value of the head (current item) needs to be removed
+  {
+    Node* newNode = head->next; // so just like in pivot, this is creating a new node to store the value of the next node
+    delete head; // this deletes head since we know it needs to be deleted since its in the if statement
+    // and then just recur i think?
+    return llfilter(newNode, pred);
+  }
+  else
+  {
+    // this handles the case in which the item doesnt need to be deleted
+    // so we just call the recursion? on the next node? and return the current value?
+    //llfilter(head->next, pred); oh wait dur this needs to be caught by a val
+    head->next = llfilter(head->next, pred);
+    return head;
+  }
+  
 
 
 }
